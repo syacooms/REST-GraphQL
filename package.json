@@ -1,0 +1,17 @@
+{
+  "name": "REST-GraphQL",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/syacooms/REST-GraphQL.git",
+  "author": "syacooms <syacooms@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts" : {
+    "client" : "yarn workspace client start",
+    "server" : "yarn workspace server start"
+  }
+}

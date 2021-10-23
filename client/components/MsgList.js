@@ -13,6 +13,8 @@ const originalMsgs = Array(50).fill(0).map((_, i) => ({
     text: `${i + 1} mock text`
 }))
 
+console.log(JSON.stringify(originalMsgs));
+
 // [
 //     {
 //         id: 1,

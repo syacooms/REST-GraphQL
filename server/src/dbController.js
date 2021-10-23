@@ -6,7 +6,7 @@ const basePath = resolve()
 
 const filenames = {
     messages: resolve(basePath, 'src/db/messages.json'),
-    users: resolve(basePath, 'src/db/user.json')
+    users: resolve(basePath, 'src/db/users.json')
 }
 
 //파일이름을 target으로 받기

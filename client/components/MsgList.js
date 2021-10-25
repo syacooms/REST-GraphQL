@@ -1,48 +1,25 @@
 import MsgItem from './MsgItem';
 import MsgInput from './MsgInput';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router'
 import fetcher from '../fetcher'
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 const UserIds = ['roy','jay']
 const getRandomUserId = () => UserIds[Math.round(Math.random())]
-
-
-
-// const originalMsgs = Array(50).fill(0).map((_, i) => ({
-//     id: i + 1,
-//     userId: getRandomUserId(),
-//     timestamp: 123456789 + i * 1000 * 60,
-//     text: `${i + 1} mock text`
-// }))
-
-//console.log(JSON.stringify(originalMsgs));
-
-// [
-//     {
-//         id: 1,
-//         userId: getRandomUserId(),
-//         timestamp: 123455679123,
-//         text: '1 mock text'
-//     },
-// ]
 
 const MsgList = () => {
     const { query: {userId = ''} } = useRouter() 
     const [msgs, setMsgs] = useState([])
     const [editingId, setEditingId] = useState(null)
+    const fetchMoreEl = useRef(null)
+    const interSecting = useInfiniteScroll(fetchMoreEl)
+    const [hasNext, setHasNext] = useState(true)
 
     const onCreate = async text => {
         const newMsg = await fetcher('post', '/messages', { text, userId })
         if (!newMsg) throw Error('something wrong')
-        // const newMsg = {
-        //     id: msgs.length,
-        //     userId: getRandomUserId(),
-        //     timestamp: Date.now(),
-        //     text: `${msgs.length + 1} ${text}`
-        // }
         setMsgs(msgs => ([newMsg, ...msgs]))
-        //console.log(msgs);
     }
 
     const onUpdate = async (text, id) => {
@@ -52,10 +29,6 @@ const MsgList = () => {
             const targetIndex = msgs.findIndex(msg => msg.id === id)
             if (targetIndex < 0) return msgs;
             const newMsgs = [...msgs]
-            // newMsgs.splice(targetIndex, 1, {
-            //     ...msgs[targetIndex],
-            //     text
-            // })
             newMsgs.splice(targetIndex, 1, newMsg)
             return newMsgs
         })
@@ -76,13 +49,18 @@ const MsgList = () => {
     const doneEdit = () => setEditingId(null);
 
     const getMessages = async () => {
-        const msgs = await fetcher('get', '/messages')
-        setMsgs(msgs)
+        const newMsgs = await fetcher('get', '/messages', {params: { cursor: msgs[msgs.length -1]?.id || ''}})
+        if(newMsgs.length == 0) {
+            setHasNext(false)
+            return
+        }
+        setMsgs(msg => [...msg,...newMsgs])
     }
 
     useEffect(() => {
-        getMessages()
-    }, [])
+        if(interSecting && hasNext) getMessages()
+    }, [interSecting])
+
 
     return (
         <>
@@ -96,6 +74,7 @@ const MsgList = () => {
                 myId={userId} 
                 {...x} />))}
             </ul>
+            <div ref={fetchMoreEl} />
         </>
     )
 }

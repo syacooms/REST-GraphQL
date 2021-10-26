@@ -24,7 +24,9 @@ server.applyMiddleware({
     app, 
     path: '/graphql',
     cors: {
-        origin: "http://localhost:3000",
+        origin: ['http://localhost:3000',
+            'https://studio.apollographql.com'
+        ],// 뒤에 슬래시 붙여서 하루종일 안됫엇음 ㅅㅂ
         credentials: true
     }
 })

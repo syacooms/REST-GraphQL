@@ -1,8 +1,8 @@
 import express from 'express'
-import messagesRoute from './routes/messages.js'
-import usersRoute from './routes/users.js'
 import { ApolloServer } from 'apollo-server-express'
 import schema from './schema/index.js'
+import resolvers from './resolvers/index.js'
+import { readDB } from './dbController.js'
 
 
 
@@ -11,9 +11,9 @@ const server = new ApolloServer({
     typeDefs: schema,
     resolvers,
     context: {
-        model: {
-            messages: '',
-            users: ''
+        db: {
+            messages: readDB('messages'),
+            users: readDB('users')
         }
     }
 })

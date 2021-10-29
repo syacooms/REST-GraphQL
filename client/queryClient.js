@@ -1,16 +1,13 @@
 import { request } from 'graphql-request'
-import axios from "axios";
-
 const URL = 'http://localhost:8000/graphql'
 
-export const fetcher = (query, variables = {}) => request(URL, querry, variables)
+export const fetcher = (query, variables = {}) => request(URL, query, variables)
 
-
-/* 
-get: axios.get(url[, config])
-delete: axios.delete(url[, config])
-post: axios.post(url, data[, config])
-put: axios.put(url, data[, config])
-*/
+export const QueryKeys = {
+  MESSAGES: 'MESSAGES',
+  MESSAGE: 'MESSAGE',
+  USERS: 'USERS',
+  USER: 'USER',
+}
 
 export default fetcher
